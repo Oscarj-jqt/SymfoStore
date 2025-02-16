@@ -58,6 +58,7 @@ final class ProductController extends AbstractController
             foreach ($errors as $error) {
                 $errorMessages[] = $error->getMessage();
             }
+
             return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
         }
 
@@ -115,8 +116,9 @@ final class ProductController extends AbstractController
         if (count($errors) > 0) {
             $errorMessages = [];
             foreach ($errors as $error) {
-                $errorMessages[] = $error->getPropertyPath() . ' : ' . $error->getMessage();
+                $errorMessages[] = $error->getPropertyPath().' : '.$error->getMessage();
             }
+
             return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
         }
 

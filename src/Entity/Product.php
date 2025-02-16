@@ -24,13 +24,13 @@ class Product
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Assert\NotBlank(message: "La description est requise.")]
+    #[Assert\NotBlank(message: 'La description est requise.')]
     //    #[Groups(["product:read", "product:write"])]
     private ?string $description = null;
 
     #[ORM\Column]
-    #[Assert\NotBlank(message: "Le prix est requis.")]
-    #[Assert\Positive(message: "Le prix doit être supérieur à 0.")]
+    #[Assert\NotBlank(message: 'Le prix est requis.')]
+    #[Assert\Positive(message: 'Le prix doit être supérieur à 0.')]
     //    #[Groups(["product:read", "product:write"])]
     private ?float $price = null;
 
@@ -40,7 +40,7 @@ class Product
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Assert\NotNull(message: "La catégorie est obligatoire.")]
+    #[Assert\NotNull(message: 'La catégorie est obligatoire.')]
     #[Groups(['product:read'])]
     #[MaxDepth(1)]
     private ?Category $category = null;
