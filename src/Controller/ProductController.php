@@ -27,7 +27,6 @@ final class ProductController extends AbstractController
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
-
     #[Route('/', name: 'app_product_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository, SerializerInterface $serializer): Response
     {
@@ -37,14 +36,14 @@ final class ProductController extends AbstractController
             return $this->json(['error' => 'Invalid data'], Response::HTTP_BAD_REQUEST);
         }
 
-//        $category = $categoryRepository->find($data['category_id']);
-//        if (!$category) {
-//            return $this->json(['error' => 'Category not found'], Response::HTTP_NOT_FOUND);
-//        }
+        //        $category = $categoryRepository->find($data['category_id']);
+        //        if (!$category) {
+        //            return $this->json(['error' => 'Category not found'], Response::HTTP_NOT_FOUND);
+        //        }
 
         $product = new Product();
         $product->setName($data['name']);
-//        $product->setCategory($category['category_id']);
+        //        $product->setCategory($category['category_id']);
         $product->setDescription($data['description']);
         $product->setPrice($data['price']);
 
