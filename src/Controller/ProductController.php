@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/api/product')]
 final class ProductController extends AbstractController
@@ -28,7 +29,7 @@ final class ProductController extends AbstractController
     }
 
     #[Route('/', name: 'app_product_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository, SerializerInterface $serializer): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository, SerializerInterface $serializer, ValidatorInterface $validator): Response
     {
         $data = json_decode($request->getContent(), true);
 
@@ -49,6 +50,16 @@ final class ProductController extends AbstractController
 
         // Récupérer la catégorie via son ID
         $category = $entityManager->getRepository(Category::class)->find($data['category_id']);
+
+        // ✅ Validation des données
+        $errors = $validator->validate($product);
+        if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[] = $error->getMessage();
+            }
+            return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
+        }
 
         if (!$category) {
             return new JsonResponse(['error' => 'Category not found'], 404);
@@ -73,7 +84,7 @@ final class ProductController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_product_edit', methods: ['GET', 'PUT'])]
-    public function edit(Request $request, Product $product, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository): Response
+    public function edit(Request $request, Product $product, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository, ValidatorInterface $validator): Response
     {
         $data = json_decode($request->getContent(), true);
 
@@ -98,6 +109,15 @@ final class ProductController extends AbstractController
                 return $this->json(['error' => 'Category not found'], Response::HTTP_NOT_FOUND);
             }
             $product->setCategory($category);
+        }
+
+        $errors = $validator->validate($product);
+        if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[] = $error->getPropertyPath() . ' : ' . $error->getMessage();
+            }
+            return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
         }
 
         $entityManager->flush();
