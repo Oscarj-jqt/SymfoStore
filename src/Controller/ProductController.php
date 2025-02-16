@@ -17,13 +17,16 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route('/api/product')]
 final class ProductController extends AbstractController
 {
-    #[Route(name: 'app_product_index', methods: ['GET'])]
-    public function index(ProductRepository $productRepository): Response
+    #[Route('/', name: 'app_product_index', methods: ['GET'])]
+    public function index(ProductRepository $productRepository, SerializerInterface $serializer): Response
     {
         $products = $productRepository->findAll();
 
-        return $this->json($products, Response::HTTP_OK);
+        $json = $serializer->serialize($products, 'json', ['groups' => ['product:read']]);
+
+        return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
+
 
     #[Route('/', name: 'app_product_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository, SerializerInterface $serializer): Response
@@ -63,9 +66,11 @@ final class ProductController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_product_show', methods: ['GET'])]
-    public function show(Product $product): JsonResponse
+    public function show(Product $product, SerializerInterface $serializer): JsonResponse
     {
-        return $this->json($product, Response::HTTP_OK);
+        $json = $serializer->serialize($product, 'json', ['groups' => ['product:read']]);
+
+        return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
     #[Route('/{id}', name: 'app_product_edit', methods: ['GET', 'PUT'])]
@@ -104,6 +109,10 @@ final class ProductController extends AbstractController
     #[Route('/{id}', name: 'app_product_delete', methods: ['DELETE'])]
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
+        if (!$product) {
+            return $this->json(['error' => 'Product not found'], Response::HTTP_NOT_FOUND);
+        }
+
         $entityManager->remove($product);
         $entityManager->flush();
 
