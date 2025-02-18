@@ -2,16 +2,16 @@
 
 namespace App\Controller;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\User;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use App\Repository\UserRepository;
 
 class RegistrationController extends AbstractController
 {
@@ -31,7 +31,7 @@ class RegistrationController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['email']) || !isset($data['password'])) {
-            return new JsonResponse(['error' => 'email and password are required'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['error' => 'email and password are required'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // Create new user
@@ -39,7 +39,7 @@ class RegistrationController extends AbstractController
         $user->setEmail($data['email'] ?? '');
         $user->setPassword($data['password'] ?? '');
 
-//        User validation
+        //        User validation
 
         $errors = $validator->validate($user);
         if (count($errors) > 0) {
@@ -47,6 +47,7 @@ class RegistrationController extends AbstractController
             foreach ($errors as $error) {
                 $errorMessages[] = $error->getMessage();
             }
+
             return new JsonResponse(['errors' => $errorMessages], JsonResponse::HTTP_BAD_REQUEST);
         }
         // Hash password
@@ -63,11 +64,10 @@ class RegistrationController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-
         // Retourner une réponse JSON indiquant que l'inscription est réussie
         return new JsonResponse([
             'message' => 'User registered successfully',
             'roles' => $user->getRoles(),
-            ],Response::HTTP_CREATED);
+        ], Response::HTTP_CREATED);
     }
 }
