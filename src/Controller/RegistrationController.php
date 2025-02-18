@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\User;
@@ -24,31 +25,41 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/register', name: 'user_register', methods: ['POST'])]
-    public function register(Request $request, ValidatorInterface $validator): JsonResponse
+    public function register(Request $request, ValidatorInterface $validator, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): JsonResponse
     {
         // Récupérer les données envoyées par le client (nom, mot de passe)
         $data = json_decode($request->getContent(), true);
 
-        if (!isset($data['name']) || !isset($data['password'])) {
-            return new JsonResponse(['error' => 'Name and password are required'], Response::HTTP_BAD_REQUEST);
+        if (!isset($data['email']) || !isset($data['password'])) {
+            return new JsonResponse(['error' => 'email and password are required'], Response::HTTP_BAD_REQUEST);
         }
 
-        // Créer un nouvel utilisateur
+        // Create new user
         $user = new User();
-        $user->setEmail($data['email']);
+        $user->setEmail($data['email'] ?? '');
+        $user->setPassword($data['password'] ?? '');
 
-        // Hachage du mot de passe
-        $hashedPassword = $this->passwordHasher->hashPassword(
-            $user,
-            $data['password']  // Le mot de passe en clair envoyé par le client
-        );
+//        User validation
+
+        $errors = $validator->validate($user);
+        if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[] = $error->getMessage();
+            }
+            return new JsonResponse(['errors' => $errorMessages], JsonResponse::HTTP_BAD_REQUEST);
+        }
+        // Hash password
+        $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
         $user->setPassword($hashedPassword);
 
-        // Optionnel : Ajouter un rôle, par exemple "ROLE_USER"
+        // Role adding
         $user->setRoles(['ROLE_USER']);
 
-        // Sauvegarder l'utilisateur dans la base de données
-        $this->userRepository->save($user, true);
+        // saving to database
+        $entityManager->persist($user);
+        $entityManager->flush();
+
 
         // Retourner une réponse JSON indiquant que l'inscription est réussie
         return new JsonResponse(['message' => 'User registered successfully'], Response::HTTP_CREATED);
