@@ -53,8 +53,11 @@ class RegistrationController extends AbstractController
         $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
         $user->setPassword($hashedPassword);
 
-        // Role adding
-        $user->setRoles(['ROLE_USER']);
+        $roles = isset($data['roles']) ? (array) $data['roles'] : ['ROLE_USER'];
+        if (!in_array('ROLE_USER', $roles, true)) {
+            $roles[] = 'ROLE_USER';
+        }
+        $user->setRoles($roles);
 
         // saving to database
         $entityManager->persist($user);
@@ -62,6 +65,9 @@ class RegistrationController extends AbstractController
 
 
         // Retourner une réponse JSON indiquant que l'inscription est réussie
-        return new JsonResponse(['message' => 'User registered successfully'], Response::HTTP_CREATED);
+        return new JsonResponse([
+            'message' => 'User registered successfully',
+            'roles' => $user->getRoles(),
+            ],Response::HTTP_CREATED);
     }
 }
