@@ -26,7 +26,8 @@ class LoginController extends AbstractController
         $this->entityManager = $entityManager;
     }
     /**
-     * @Route("/api/login", name="api_login", methods={"POST"})
+     * In routes.yaml file
+     * @Route("/api/login_check", name="api_login", methods={"POST"})
      */
     public function login(Request $request, JWTTokenManagerInterface $JWTManager, UserPasswordHasherInterface $passwordEncoder): JsonResponse
     {
@@ -34,28 +35,33 @@ class LoginController extends AbstractController
         $email = $data['email'] ?? null;
         $password = $data['password'] ?? null;
 
-        // Vérifier que l'utilisateur existe
+        if (!$email || !$password) {
+            return new JsonResponse(['message' => 'Email and password are required'], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        // checking is user existing
         $user = $this->entityManager
             ->getRepository(User::class)
             ->findOneBy(['email' => $email]);
 
-        if (!$user) {
-            return new JsonResponse(['message' => 'Invalid credentials'], JsonResponse::HTTP_UNAUTHORIZED);
-        }
+        $roles = $user->getRoles();
+        error_log('User roles: ' . json_encode($roles));
 
-        if (!$passwordEncoder->isPasswordValid($user, $password)) {
-            return new JsonResponse(['message' => 'Invalid credentials'], JsonResponse::HTTP_UNAUTHORIZED);
-        }
+
 
         // Checking if user has admin role
-        if (!in_array('ROLE_ADMIN', $user->getRoles())) {
-            return new JsonResponse(['message' => 'You do not have access to this resource.'], JsonResponse::HTTP_FORBIDDEN);
+        if (in_array('ROLE_ADMIN', $roles, true)) {
+            $token = $JWTManager->create($user);
+            return new JsonResponse([
+                'message' => 'Login successful as Admin',
+                'token' => $token
+            ]);
+        } else {
+            return new JsonResponse([
+                'message' => 'Login successful as User. No token provided.'
+            ]);
         }
 
-        // if he has it, token is generated
-        $token = $JWTManager->create($user);
-
-        return new JsonResponse(['token' => $token]);
     }
 
 }
