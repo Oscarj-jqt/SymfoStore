@@ -5,19 +5,16 @@ namespace App\Controller;
 namespace App\Controller;
 
 use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\ORM\EntityManagerInterface;
-
 
 class LoginController extends AbstractController
 {
-
     private $entityManager;
 
     // Injection du service Doctrine dans le constructeur
@@ -25,8 +22,10 @@ class LoginController extends AbstractController
     {
         $this->entityManager = $entityManager;
     }
+
     /**
-     * In routes.yaml file
+     * In routes.yaml file.
+     *
      * @Route("/api/login_check", name="api_login", methods={"POST"})
      */
     public function login(Request $request, JWTTokenManagerInterface $JWTManager, UserPasswordHasherInterface $passwordEncoder): JsonResponse
@@ -45,23 +44,20 @@ class LoginController extends AbstractController
             ->findOneBy(['email' => $email]);
 
         $roles = $user->getRoles();
-        error_log('User roles: ' . json_encode($roles));
-
-
+        error_log('User roles: '.json_encode($roles));
 
         // Checking if user has admin role
         if (in_array('ROLE_ADMIN', $roles, true)) {
             $token = $JWTManager->create($user);
+
             return new JsonResponse([
                 'message' => 'Login successful as Admin',
-                'token' => $token
+                'token' => $token,
             ]);
         } else {
             return new JsonResponse([
-                'message' => 'Login successful as User. No token provided.'
+                'message' => 'Login successful as User. No token provided.',
             ]);
         }
-
     }
-
 }
