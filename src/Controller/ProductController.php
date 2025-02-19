@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-#[Route('/api/product')]
+#[Route('/api/admin/product')]
 final class ProductController extends AbstractController
 {
     #[Route('/', name: 'app_product_index', methods: ['GET'])]
@@ -28,7 +28,7 @@ final class ProductController extends AbstractController
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/', name: 'app_product_new', methods: ['GET', 'POST'])]
+    #[Route('/new/{id}', name: 'app_product_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository, SerializerInterface $serializer, ValidatorInterface $validator): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -48,10 +48,9 @@ final class ProductController extends AbstractController
         $product->setDescription($data['description']);
         $product->setPrice($data['price']);
 
-        // Récupérer la catégorie via son ID
         $category = $entityManager->getRepository(Category::class)->find($data['category_id']);
 
-        // ✅ Validation des données
+
         $errors = $validator->validate($product);
         if (count($errors) > 0) {
             $errorMessages = [];
@@ -76,7 +75,7 @@ final class ProductController extends AbstractController
         return new JsonResponse($json, 200, [], true);
     }
 
-    #[Route('/{id}', name: 'app_product_show', methods: ['GET'])]
+    #[Route('/show/{id}', name: 'app_product_show', methods: ['GET'])]
     public function show(Product $product, SerializerInterface $serializer): JsonResponse
     {
         $json = $serializer->serialize($product, 'json', ['groups' => ['product:read']]);
@@ -84,7 +83,7 @@ final class ProductController extends AbstractController
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/api/admin/product/edit/{id}', name: 'app_product_edit', methods: ['GET', 'PUT'])]
+    #[Route('/edit/{id}', name: 'app_product_edit', methods: ['GET', 'PUT'])]
     public function edit(Request $request, Product $product, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository, ValidatorInterface $validator): Response
     {
 //        checking if role is admin
@@ -130,7 +129,7 @@ final class ProductController extends AbstractController
         return $this->json($product, ['message' => 'Product updated successfully'], Response::HTTP_OK);
     }
 
-    #[Route('/api/admin/product/delete/{id}', name: 'app_product_delete', methods: ['DELETE'])]
+    #[Route('/delete/{id}', name: 'app_product_delete', methods: ['DELETE'])]
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');

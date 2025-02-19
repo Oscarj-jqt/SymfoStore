@@ -19,7 +19,7 @@ final class CategoryController extends AbstractController
         return $this->json($categoryRepository->findAll(), Response::HTTP_OK);
     }
 
-    #[Route('/new', name: 'app_category_new', methods: ['GET', 'POST'])]
+    #[Route('/new/{id}', name: 'app_category_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $data = json_decode($request->getContent(), true);
