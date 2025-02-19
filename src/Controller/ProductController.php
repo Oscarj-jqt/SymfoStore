@@ -84,9 +84,12 @@ final class ProductController extends AbstractController
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/{id}', name: 'app_product_edit', methods: ['GET', 'PUT'])]
+    #[Route('/api/admin/product/edit/{id}', name: 'app_product_edit', methods: ['GET', 'PUT'])]
     public function edit(Request $request, Product $product, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository, ValidatorInterface $validator): Response
     {
+//        checking if role is admin
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         $data = json_decode($request->getContent(), true);
 
         if (!$data) {
@@ -124,12 +127,14 @@ final class ProductController extends AbstractController
 
         $entityManager->flush();
 
-        return $this->json($product, Response::HTTP_OK);
+        return $this->json($product, ['message' => 'Product updated successfully'], Response::HTTP_OK);
     }
 
-    #[Route('/{id}', name: 'app_product_delete', methods: ['DELETE'])]
+    #[Route('/api/admin/product/delete/{id}', name: 'app_product_delete', methods: ['DELETE'])]
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
         if (!$product) {
             return $this->json(['error' => 'Product not found'], Response::HTTP_NOT_FOUND);
         }

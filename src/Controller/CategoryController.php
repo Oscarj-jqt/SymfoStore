@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/api/category')]
+#[Route('/api/admin/category')]
 final class CategoryController extends AbstractController
 {
     #[Route(name: 'app_category_index', methods: ['GET'])]
@@ -19,7 +19,7 @@ final class CategoryController extends AbstractController
         return $this->json($categoryRepository->findAll(), Response::HTTP_OK);
     }
 
-    #[Route('/', name: 'app_category_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'app_category_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -36,13 +36,13 @@ final class CategoryController extends AbstractController
         return $this->json($category, Response::HTTP_CREATED);
     }
 
-    #[Route('/{id}', name: 'app_category_show', methods: ['GET'])]
+    #[Route('/show/{id}', name: 'app_category_show', methods: ['GET'])]
     public function show(Category $category): Response
     {
         return $this->json($category, Response::HTTP_OK);
     }
 
-    #[Route('/{id}', name: 'app_category_edit', methods: ['GET', 'PUT'])]
+    #[Route('/edit/{id}', name: 'app_category_edit', methods: ['GET', 'PUT'])]
     public function edit(Request $request, Category $category, EntityManagerInterface $entityManager): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -56,7 +56,7 @@ final class CategoryController extends AbstractController
         return $this->json($category, Response::HTTP_OK);
     }
 
-    #[Route('/{id}', name: 'app_category_delete', methods: ['DELETE'])]
+    #[Route('/delete/{id}', name: 'app_category_delete', methods: ['DELETE'])]
     public function delete(Request $request, Category $category, EntityManagerInterface $entityManager): Response
     {
         $entityManager->remove($category);
