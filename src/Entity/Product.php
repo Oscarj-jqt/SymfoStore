@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use DateTimeImmutable;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 class Product
@@ -34,9 +35,6 @@ class Product
     //    #[Groups(["product:read", "product:write"])]
     private ?float $price = null;
 
-    #[ORM\Column]
-    //    #[Groups(["product:read", "product:write"])]
-    private ?\DateTimeImmutable $createdAt;
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
@@ -82,18 +80,6 @@ class Product
     public function setPrice(float $price): static
     {
         $this->price = $price;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
 
         return $this;
     }

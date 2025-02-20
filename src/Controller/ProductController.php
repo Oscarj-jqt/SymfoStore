@@ -37,16 +37,17 @@ final class ProductController extends AbstractController
             return $this->json(['error' => 'Invalid data'], Response::HTTP_BAD_REQUEST);
         }
 
-        //        $category = $categoryRepository->find($data['category_id']);
-        //        if (!$category) {
-        //            return $this->json(['error' => 'Category not found'], Response::HTTP_NOT_FOUND);
-        //        }
+        $category = $categoryRepository->find($data['category_id']);
+        if (!$category) {
+            return $this->json(['error' => 'Category not found'], Response::HTTP_NOT_FOUND);
+        }
 
         $product = new Product();
         $product->setName($data['name']);
         //        $product->setCategory($category['category_id']);
         $product->setDescription($data['description']);
         $product->setPrice($data['price']);
+        $product->setCategory($category);
 
         $category = $entityManager->getRepository(Category::class)->find($data['category_id']);
 
@@ -60,11 +61,6 @@ final class ProductController extends AbstractController
             return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
         }
 
-        if (!$category) {
-            return new JsonResponse(['error' => 'Category not found'], 404);
-        }
-        $product->setCategory($category);
-        //        $product->setCreatedAt($data['createdAt']);
 
         $entityManager->persist($product);
         $entityManager->flush();
