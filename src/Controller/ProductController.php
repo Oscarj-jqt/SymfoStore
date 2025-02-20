@@ -50,7 +50,6 @@ final class ProductController extends AbstractController
 
         $category = $entityManager->getRepository(Category::class)->find($data['category_id']);
 
-
         $errors = $validator->validate($product);
         if (count($errors) > 0) {
             $errorMessages = [];
@@ -86,7 +85,7 @@ final class ProductController extends AbstractController
     #[Route('/edit/{id}', name: 'app_product_edit', methods: ['GET', 'PUT'])]
     public function edit(Request $request, Product $product, EntityManagerInterface $entityManager, CategoryRepository $categoryRepository, ValidatorInterface $validator): Response
     {
-//        checking if role is admin
+        //        checking if role is admin
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $data = json_decode($request->getContent(), true);
