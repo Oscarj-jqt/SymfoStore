@@ -61,7 +61,6 @@ final class ProductController extends AbstractController
             return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
         }
 
-
         $entityManager->persist($product);
         $entityManager->flush();
 

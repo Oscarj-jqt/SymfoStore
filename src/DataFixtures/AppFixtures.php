@@ -2,8 +2,8 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Product;
 use App\Entity\Category;
+use App\Entity\Product;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -42,7 +42,7 @@ class AppFixtures extends Fixture
             ['category_id' => 4, 'name' => 'Bottes', 'description' => 'Chaussures robustes en cuir pour l’hiver.', 'price' => 89.99],
             ['category_id' => 4, 'name' => 'Veste en cuir', 'description' => 'Veste élégante en cuir véritable.', 'price' => 149.99],
             ['category_id' => 5, 'name' => 'PC portable Asus', 'description' => 'Ordinateur portable performant pour le travail et le gaming.', 'price' => 1200.00],
-            ['category_id' => 5, 'name' => 'iPhone 16', 'description' => 'Dernier modèle d’Apple avec caméra améliorée et performance optimisée.', 'price' => 1500.00]
+            ['category_id' => 5, 'name' => 'iPhone 16', 'description' => 'Dernier modèle d’Apple avec caméra améliorée et performance optimisée.', 'price' => 1500.00],
         ];
 
         foreach ($productsData as $data) {
@@ -55,7 +55,7 @@ class AppFixtures extends Fixture
             $manager->persist($product);
         }
 
-//        Saving products in database
+        //        Saving products in database
         $manager->flush();
     }
 }
