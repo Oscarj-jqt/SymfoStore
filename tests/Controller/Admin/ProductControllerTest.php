@@ -30,7 +30,7 @@ class ProductControllerTest extends WebTestCase
     public function testEditProductAsAdmin()
     {
         $token = $this->getAuthToken('admin@admin.com', '123456');
-        $this->client->setServerParameter('HTTP_Authorization', 'Bearer ' . $token);
+        $this->client->setServerParameter('HTTP_Authorization', 'Bearer '.$token);
 
         $this->client->request('PUT', '/api/admin/product/edit/11', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'name' => 'Riz thaïlandais',
@@ -46,7 +46,7 @@ class ProductControllerTest extends WebTestCase
     public function testEditProductAsNonAdmin()
     {
         $token = $this->getAuthToken('user@user.com', '123456');
-        $this->client->setServerParameter('HTTP_Authorization', 'Bearer ' . $token);
+        $this->client->setServerParameter('HTTP_Authorization', 'Bearer '.$token);
 
         $this->client->request('PUT', '/api/admin/product/edit/11', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'name' => 'Produit Modifié',
@@ -61,7 +61,7 @@ class ProductControllerTest extends WebTestCase
     public function testEditProductWithInvalidData()
     {
         $token = $this->getAuthToken('admin@admin.com', '123456');
-        $this->client->setServerParameter('HTTP_Authorization', 'Bearer ' . $token);
+        $this->client->setServerParameter('HTTP_Authorization', 'Bearer '.$token);
 
         $this->client->request('PUT', '/api/admin/product/edit/11', [], [], ['CONTENT_TYPE' => 'application/json'], json_encode([
             'name' => '',
