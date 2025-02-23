@@ -1,8 +1,8 @@
-# 🛍 Gestion des Produits - Product API
+# Gestion des Produits - Product API
 
 Ce projet est une application permettant de gérer un catalogue de produits et leurs catégories via une API RESTful. Elle inclut des fonctionnalités comme la gestion des accès, la validation des données et l’authentification sécurisée via JWT. Le backend est développé en **PHP avec Symfony**, et la base de données utilisée est **MySQL**.
 
-## 📌 Description des Choix Techniques
+## Description des Choix Techniques
 
 ### Backend - PHP avec Symfony & MySQL
 * **Symfony** est utilisé pour développer une API REST robuste et gérer les opérations backend.
@@ -17,7 +17,7 @@ Ce projet est une application permettant de gérer un catalogue de produits et l
 * **Validation des données** pour assurer la conformité des entrées utilisateur.
 * **Tests avec PHPUnit** pour garantir la stabilité et le bon fonctionnement de l’API.
 
-## 🚀 Fonctionnalités Principales
+## Fonctionnalités Principales
 * **Gestion des produits** : Création, modification, suppression et affichage des produits.
 * **Gestion des catégories** : Création, modification, suppression et affichage des catégories.
 * **Authentification sécurisée** avec JWT pour restreindre certaines actions.
@@ -25,7 +25,7 @@ Ce projet est une application permettant de gérer un catalogue de produits et l
 * **Validation des données** pour assurer l'intégrité des informations stockées.
 * **Tests unitaires et fonctionnels** pour valider le comportement de l’API.
 
-## 🛠 Prérequis
+## Prérequis
 
 Avant de démarrer le projet, assure-toi d'avoir installé les éléments suivants :
 
@@ -35,9 +35,9 @@ Avant de démarrer le projet, assure-toi d'avoir installé les éléments suivan
 * **MySQL** 8.0 ou supérieur
 * **Postman** (optionnel, pour tester l’API)
 
-## 📥 Instructions pour l'installation
+## Instructions pour l'installation
 
-### 1️⃣ Cloner le projet
+### Cloner le projet
 ```bash
 git clone <LIEN_DU_REPO>
 cd product-api
