@@ -38,5 +38,5 @@ Avant de démarrer le projet, assure-toi d'avoir installé les éléments suivan
 
 ### Cloner le projet
 ```bash
-git clone <https://github.com/Oscarj-jqt/SymfoStore>
+git clone https://github.com/Oscarj-jqt/SymfoStore
 cd symfostore
