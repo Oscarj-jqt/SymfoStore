@@ -2,7 +2,7 @@ import { React, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ajouterProduit, modifierProduit, supprimerProduit, setErreurProduit } from "../redux/reducers/produitsReducer";
 import '../../src/index.css';
-// Composant qui gère l'affichage et les opération CRUD des produits
+// Composant qui gère l'affichage et les opérations CRUD des produits
 function ProduitsListe() {
 
     const dispatch = useDispatch();
