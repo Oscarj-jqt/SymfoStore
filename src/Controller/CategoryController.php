@@ -14,9 +14,9 @@ use Symfony\Component\Routing\Attribute\Route;
 final class CategoryController extends AbstractController
 {
     #[Route(name: 'app_category_index', methods: ['GET'])]
-    public function index(CategoryRepository $categoryRepository): Response
+    public function index(CategoryRepository $categoryRepository, Category $category): Response
     {
-        return $this->json($categoryRepository->findAll(), Response::HTTP_OK);
+        return $this->json($category, Response::HTTP_OK, [], ['groups' => 'category:read']);
     }
 
     #[Route('/new', name: 'app_category_new', methods: ['GET', 'POST'])]
@@ -33,13 +33,15 @@ final class CategoryController extends AbstractController
         $entityManager->persist($category);
         $entityManager->flush();
 
-        return $this->json($category, Response::HTTP_CREATED);
+        return $this->json($category, Response::HTTP_OK, [], ['groups' => 'category:read']);
+
     }
 
     #[Route('/show/{id}', name: 'app_category_show', methods: ['GET'])]
     public function show(Category $category): Response
     {
-        return $this->json($category, Response::HTTP_OK);
+        return $this->json($category, Response::HTTP_OK, [], ['groups' => 'category:read']);
+
     }
 
     #[Route('/edit/{id}', name: 'app_category_edit', methods: ['PUT'])]
@@ -53,7 +55,8 @@ final class CategoryController extends AbstractController
         $category->setName($data['name']);
         $entityManager->flush();
 
-        return $this->json($category, Response::HTTP_OK);
+        return $this->json($category, Response::HTTP_OK, [], ['groups' => 'category:read']);
+
     }
 
     #[Route('/delete/{id}', name: 'app_category_delete', methods: ['DELETE'])]
