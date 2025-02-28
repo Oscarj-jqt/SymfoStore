@@ -52,8 +52,8 @@ final class CategoryController extends AbstractController
         return new Response($json, Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
-    #[Route('/edit/{id}', name: 'app_category_edit', methods: ['GET', 'PUT'])]
-    public function edit(Request $request, Category $category, EntityManagerInterface $entityManager): Response
+    #[Route('/edit/{id}', name: 'app_category_edit', methods: ['PUT'])]
+    public function edit(Request $request, Category $category, EntityManagerInterface $entityManager, SerializerInterface $serializer): Response
     {
         $data = json_decode($request->getContent(), true);
         if (!$data || !isset($data['name'])) {
@@ -63,7 +63,9 @@ final class CategoryController extends AbstractController
         $category->setName($data['name']);
         $entityManager->flush();
 
-        return $this->json($category, Response::HTTP_OK);
+        $json = $serializer->serialize($category, 'json', ['groups' => 'category:read']);
+
+        return new Response($json, Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
     #[Route('/delete/{id}', name: 'app_category_delete', methods: ['DELETE'])]
