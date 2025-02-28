@@ -25,8 +25,8 @@ final class CategoryController extends AbstractController
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/new/{id}', name: 'app_category_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/new', name: 'app_category_new', methods: ['POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager, SerializerInterface $serializer): Response
     {
         $data = json_decode($request->getContent(), true);
         if (!$data || !isset($data['name'])) {
@@ -39,7 +39,9 @@ final class CategoryController extends AbstractController
         $entityManager->persist($category);
         $entityManager->flush();
 
-        return $this->json($category, Response::HTTP_CREATED);
+        $json = $serializer->serialize($category, 'json', ['groups' => 'category:read']);
+
+        return new Response($json, Response::HTTP_CREATED, ['Content-Type' => 'application/json']);
     }
 
     #[Route('/show/{id}', name: 'app_category_show', methods: ['GET'])]
