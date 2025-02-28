@@ -69,7 +69,7 @@ final class CategoryController extends AbstractController
     }
 
     #[Route('/delete/{id}', name: 'app_category_delete', methods: ['DELETE'])]
-    public function delete(Request $request, Category $category, EntityManagerInterface $entityManager): Response
+    public function delete(Category $category, EntityManagerInterface $entityManager): Response
     {
         $entityManager->remove($category);
         $entityManager->flush();
