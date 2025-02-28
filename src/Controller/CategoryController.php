@@ -4,6 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Repository\CategoryRepository;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,12 +17,15 @@ use Symfony\Component\Routing\Attribute\Route;
 final class CategoryController extends AbstractController
 {
     #[Route(name: 'app_category_index', methods: ['GET'])]
-    public function index(CategoryRepository $categoryRepository, Category $category): Response
+    public function index(CategoryRepository $categoryRepository, SerializerInterface $serializer): Response
     {
-        return $this->json($category, Response::HTTP_OK, [], ['groups' => 'category:read']);
+        $categories = $categoryRepository->findAll();
+        $json = $serializer->serialize($categories, 'json', ['groups' => 'category:read']);
+
+        return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/new', name: 'app_category_new', methods: ['GET', 'POST'])]
+    #[Route('/new/{id}', name: 'app_category_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -33,18 +39,16 @@ final class CategoryController extends AbstractController
         $entityManager->persist($category);
         $entityManager->flush();
 
-        return $this->json($category, Response::HTTP_OK, [], ['groups' => 'category:read']);
-
+        return $this->json($category, Response::HTTP_CREATED);
     }
 
     #[Route('/show/{id}', name: 'app_category_show', methods: ['GET'])]
     public function show(Category $category): Response
     {
-        return $this->json($category, Response::HTTP_OK, [], ['groups' => 'category:read']);
-
+        return $this->json($category, Response::HTTP_OK);
     }
 
-    #[Route('/edit/{id}', name: 'app_category_edit', methods: ['PUT'])]
+    #[Route('/edit/{id}', name: 'app_category_edit', methods: ['GET', 'PUT'])]
     public function edit(Request $request, Category $category, EntityManagerInterface $entityManager): Response
     {
         $data = json_decode($request->getContent(), true);
@@ -55,8 +59,7 @@ final class CategoryController extends AbstractController
         $category->setName($data['name']);
         $entityManager->flush();
 
-        return $this->json($category, Response::HTTP_OK, [], ['groups' => 'category:read']);
-
+        return $this->json($category, Response::HTTP_OK);
     }
 
     #[Route('/delete/{id}', name: 'app_category_delete', methods: ['DELETE'])]

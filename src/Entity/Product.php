@@ -15,23 +15,24 @@ class Product
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['product:read', 'category:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le nom du produit est requis.')]
     #[Assert\Length(min: 3, max: 255, minMessage: 'Le nom doit contenir au moins 3 caractères.')]
-    //    #[Groups(["product:read", "product:write"])]
+    #[Groups(['product:read', 'category:read'])]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Assert\NotBlank(message: 'La description est requise.')]
-    //    #[Groups(["product:read", "product:write"])]
+    #[Groups(['product:read', 'category:read'])]
     private ?string $description = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: 'Le prix est requis.')]
     #[Assert\Positive(message: 'Le prix doit être supérieur à 0.')]
-    //    #[Groups(["product:read", "product:write"])]
+    #[Groups(['product:read', 'category:read'])]
     private ?float $price = null;
 
     #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'products')]
