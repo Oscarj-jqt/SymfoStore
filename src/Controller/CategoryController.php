@@ -45,9 +45,11 @@ final class CategoryController extends AbstractController
     }
 
     #[Route('/show/{id}', name: 'app_category_show', methods: ['GET'])]
-    public function show(Category $category): Response
+    public function show(Category $category, SerializerInterface $serializer): Response
     {
-        return $this->json($category, Response::HTTP_OK);
+        $json = $serializer->serialize($category, 'json', ['groups' => 'category:read']);
+
+        return new Response($json, Response::HTTP_OK, ['Content-Type' => 'application/json']);
     }
 
     #[Route('/edit/{id}', name: 'app_category_edit', methods: ['GET', 'PUT'])]
