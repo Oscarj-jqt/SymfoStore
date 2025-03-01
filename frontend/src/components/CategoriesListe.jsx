@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ajouterCategorie, modifierCategorie, supprimerCategorie, setErreurCategorie } from "../redux/reducers/categoriesReducer";
 import '../../src/index.css';
 
+
 function CategoriesListe() {
 
     const dispatch = useDispatch();
