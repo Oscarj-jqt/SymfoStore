@@ -1,46 +1,45 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// État initial de notre slice
+// Initial state
 const initialState = {
-  produits: [],
-  erreur: null,
+  products: [],
+  error: null,
 };
 
-// Création du slice
-const produitsSlice = createSlice({
-    // Le nom du slice
-  name: 'produits', 
+// Create the slice
+const productsSlice = createSlice({
+  name: 'products',
   initialState,
   reducers: {
-    // Action pour ajouter un produit
-    ajouterProduit: (state, action) => {
-      state.produits.push(action.payload);
-      state.erreur = null;
+    // Action to add a product
+    addProduct: (state, action) => {
+      state.products.push(action.payload);
+      state.error = null;
     },
-    // Action pour supprimer un produit
-    supprimerProduit: (state, action) => {
-      state.produits = state.produits.filter(produit => produit.id !== action.payload);
-      state.erreur = null;
+    // Action to delete a product
+    deleteProduct: (state, action) => {
+      state.products = state.products.filter(product => product.id !== action.payload);
+      state.error = null;
     },
-    // Action pour modifier un produit
-    modifierProduit: (state, action) => {
-      const index = state.produits.findIndex(produit => produit.id === action.payload.id);
+    // Action to update a product
+    updateProduct: (state, action) => {
+      const index = state.products.findIndex(product => product.id === action.payload.id);
       if (index !== -1) {
-        state.produits[index] = action.payload;
-        state.erreur = null;
+        state.products[index] = action.payload;
+        state.error = null;
       }
     },
-    setErreurProduit: (state, action) => {
-      state.erreur = action.payload;
+    setProductError: (state, action) => {
+      state.error = action.payload;
     },
-    resetErreurProduit: (state) => {
-      state.erreur = null;
+    resetProductError: (state) => {
+      state.error = null;
     }
   },
 });
 
-// Export des actions générées par createSlice
-export const { ajouterProduit, supprimerProduit, modifierProduit, setErreurProduit, resetErreurProduit } = produitsSlice.actions;
+// Export actions
+export const { addProduct, deleteProduct, updateProduct, setProductError, resetProductError } = productsSlice.actions;
 
-// Export du reducer
-export default produitsSlice.reducer;
+// Export reducer
+export default productsSlice.reducer;
