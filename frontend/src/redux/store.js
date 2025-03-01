@@ -1,6 +1,6 @@
 // Fichier pour stocker les états globaux
 import { configureStore } from '@reduxjs/toolkit';
-import produitsReducer from './reducers/produitsReducer';
+import productsReducer from "./reducers/productsReducer";
 import categoriesReducer from './reducers/categoriesReducer'
 
 const store = configureStore({
