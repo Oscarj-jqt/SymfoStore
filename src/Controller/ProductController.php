@@ -22,6 +22,7 @@ final class ProductController extends AbstractController
     {
         $products = $productRepository->findAll();
         $json = $serializer->serialize($products, 'json', ['groups' => 'product:read']);
+
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
@@ -51,6 +52,7 @@ final class ProductController extends AbstractController
             foreach ($errors as $error) {
                 $errorMessages[] = $error->getMessage();
             }
+
             return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
         }
 
@@ -58,6 +60,7 @@ final class ProductController extends AbstractController
         $entityManager->flush();
 
         $json = $serializer->serialize($product, 'json', ['groups' => 'product:read']);
+
         return new JsonResponse($json, Response::HTTP_CREATED, [], true);
     }
 
@@ -65,6 +68,7 @@ final class ProductController extends AbstractController
     public function show(Product $product, SerializerInterface $serializer): JsonResponse
     {
         $json = $serializer->serialize($product, 'json', ['groups' => 'product:read']);
+
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
@@ -101,11 +105,13 @@ final class ProductController extends AbstractController
             foreach ($errors as $error) {
                 $errorMessages[] = $error->getPropertyPath().' : '.$error->getMessage();
             }
+
             return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
         }
 
         $entityManager->flush();
         $json = $serializer->serialize($product, 'json', ['groups' => 'product:read']);
+
         return new JsonResponse($json, Response::HTTP_OK, [], true);
     }
 
