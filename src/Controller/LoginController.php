@@ -26,7 +26,7 @@ class LoginController extends AbstractController
     /**
      * In routes.yaml file.
      *
-     * @Route("/api/login_check", name="api_login", methods={"POST"})
+     * @Route("/api/login", name="api_login", methods={"POST"})
      */
     public function login(Request $request, JWTTokenManagerInterface $JWTManager, UserPasswordHasherInterface $passwordEncoder): JsonResponse
     {

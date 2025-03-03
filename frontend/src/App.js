@@ -4,6 +4,7 @@ import React from 'react';
 // import ProductsList from "./components/ProductsList.jsx";
 // import CategoriesList from "./components/CategoriesList.jsx";
 import { useEffect} from "react";
+import TestConnection from "./components/TestConnection";
 
 
 function App() {
@@ -14,7 +15,12 @@ function App() {
             .catch((err) => console.error("API error:", err));
     }, []);
 
-    return <div>Check the console!</div>;
+    return (
+        <div>
+            <h1>Test de connexion</h1>
+            <TestConnection />
+        </div>
+    );
 }
 // const App = () => {
 //   return (
