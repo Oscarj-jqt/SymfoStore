@@ -150,7 +150,7 @@ function ProductsList() {
                         <td className="px-4 py-2">{product.description}</td>
                         <td className="px-4 py-2">{product.price}</td>
                         <td className="px-4 py-2">
-                            <button onClick={() => setCurrentProduct(product)} className="bg-secondary text-white px-4 py-2 rounded-md mr-2 hover:bg-accent">Edit</button>
+                            <button onClick={() => handleUpdateProduct(product.id)} className="bg-secondary text-white px-4 py-2 rounded-md mr-2 hover:bg-accent">Edit</button>
                             <button onClick={() => handleDeleteProduct(product.id)} className="bg-accent text-white px-4 py-2 rounded-md hover:bg-highlight">Delete</button>
                         </td>
                     </tr>
