@@ -4,21 +4,22 @@ import React from 'react';
 // import ProductsList from "./components/ProductsList.jsx";
 // import CategoriesList from "./components/CategoriesList.jsx";
 import { useEffect} from "react";
-import TestConnection from "./components/TestConnection";
+
+import Login from "./components/Login";
 
 
 function App() {
-    useEffect(() => {
-        fetch("http://127.0.0.1:8000/api/admin/category")
-            .then((res) => res.json())
-            .then((data) => console.log(data))
-            .catch((err) => console.error("API error:", err));
-    }, []);
+    // useEffect(() => {
+    //     fetch("http://127.0.0.1:8000/api/admin/category")
+    //         .then((res) => res.json())
+    //         .then((data) => console.log(data))
+    //         .catch((err) => console.error("API error:", err));
+    // }, []);
 
     return (
         <div>
-            <h1>Test de connexion</h1>
-            <TestConnection />
+            <h1>Test JWT Auth</h1>
+            <Login />
         </div>
     );
 }
