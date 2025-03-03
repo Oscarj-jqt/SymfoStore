@@ -9,12 +9,6 @@ import Login from "./components/Login";
 
 
 function App() {
-    // useEffect(() => {
-    //     fetch("http://127.0.0.1:8000/api/admin/category")
-    //         .then((res) => res.json())
-    //         .then((data) => console.log(data))
-    //         .catch((err) => console.error("API error:", err));
-    // }, []);
 
     return (
         <div>
@@ -22,7 +16,7 @@ function App() {
             <Login />
         </div>
     );
-}yJpYX
+}
 // const App = () => {
 //   return (
 //     <Provider store={store}>

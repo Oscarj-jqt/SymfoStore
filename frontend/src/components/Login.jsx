@@ -1,9 +1,11 @@
 import { useState } from "react";
+import ProductsList from "./ProductsList";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -22,6 +24,7 @@ const Login = () => {
             if (response.ok) {
                 localStorage.setItem("token", data.token);
                 setMessage("Connexion réussie !");
+                setIsLoggedIn(true);
             } else {
                 setMessage("Erreur : mail ou mot de passe erroné " + data.message);
             }
@@ -32,23 +35,32 @@ const Login = () => {
 
     return (
         <div>
-            <h2>Connexion</h2>
-            <form onSubmit={handleLogin}>
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="Mot de passe"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <button type="submit">Se connecter</button>
-            </form>
-            <p>{message}</p>
+            {!isLoggedIn ? (
+                <>
+                    <h2>Connexion</h2>
+                    <form onSubmit={handleLogin}>
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <input
+                            type="password"
+                            placeholder="Mot de passe"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <button type="submit">Se connecter</button>
+                    </form>
+                    <p>{message}</p>
+                </>
+            ) : (
+                <>
+                    <p style={{ color: "green", fontWeight: "bold" }}>{message}</p>
+                    <ProductsList />
+                </>
+            )}
         </div>
     );
 };
