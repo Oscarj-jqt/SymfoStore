@@ -22,7 +22,7 @@ function App() {
             <Login />
         </div>
     );
-}
+}yJpYX
 // const App = () => {
 //   return (
 //     <Provider store={store}>
