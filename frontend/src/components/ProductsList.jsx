@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct, updateProduct, deleteProduct, setProductError } from "../redux/reducers/productsReducer";
 import '../../src/index.css';
@@ -7,6 +8,8 @@ const ProductsList = () => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -28,7 +31,14 @@ const ProductsList = () => {
                             "Authorization": `Bearer ${token}`,
                         },
                     }),
-                ]);
+                ])
+
+                if (productsResponse.status === 401 || categoriesResponse.status === 401) {
+                    setError("Session expirée. Veuillez vous reconnecter.");
+                    localStorage.removeItem("token"); // On supprime le token expiré
+                    setTimeout(() => navigate("/"), 2000); // Redirection après 2 secondes
+                    return;
+                }
 
                 if (!productsResponse.ok || !categoriesResponse.ok) {
                     throw new Error("Erreur lors de la récupération des données.");
@@ -42,16 +52,16 @@ const ProductsList = () => {
                 setLoading(false);
             } catch (error) {
                 console.error("Erreur:", error);
+                setError("Impossible de charger les données. Vérifiez votre connexion.");
                 setLoading(false);
             }
         };
 
         fetchData();
-    }, []);
+    }, [navigate]);
 
-    if (loading) {
-        return <p>Chargement des produits et catégories...</p>;
-    }
+    if (loading) return <p>Chargement des produits et catégories...</p>;
+    if (error) return <p style={{ color: "red", fontWeight: "bold" }}>{error}</p>;
 
 
     return (
