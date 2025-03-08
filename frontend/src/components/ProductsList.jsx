@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
-import { addProduct, updateProduct, deleteProduct, setProductError } from "../redux/reducers/productsReducer";
-import '../../src/index.css';
+import jwt_decode from "jwt-decode"; // Import de la librairie jwt-decode
 
 const ProductsList = () => {
     const [products, setProducts] = useState([]);
-    const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -15,44 +12,45 @@ const ProductsList = () => {
         const fetchData = async () => {
             const token = localStorage.getItem("token");
 
-            try {
-                const [productsResponse, categoriesResponse] = await Promise.all([
-                    fetch("http://127.0.0.1:8000/api/admin/product", {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`,
-                        },
-                    }),
-                    fetch("http://127.0.0.1:8000/api/admin/category", {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${token}`,
-                        },
-                    }),
-                ])
+            if (!token) {
+                setError("Token manquant. Veuillez vous reconnecter.");
+                setLoading(false);
+                return;
+            }
 
-                if (productsResponse.status === 401 || categoriesResponse.status === 401) {
+            // Décoder le token
+            const decodedToken = jwt_decode(token);
+            console.log(decodedToken); // Vérifie la structure du token
+
+            // Vérifier si l'utilisateur a le rôle 'ROLE_ADMIN'
+            const isAdmin = decodedToken.roles && decodedToken.roles.includes('ROLE_ADMIN');
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/api/admin/product", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                if (response.status === 401) {
                     setError("Session expirée. Veuillez vous reconnecter.");
-                    localStorage.removeItem("token"); // On supprime le token expiré
-                    setTimeout(() => navigate("/api/login"), 2000); // Redirection après 2 secondes
+                    localStorage.removeItem("token");
+                    setTimeout(() => navigate("/login"), 2000); // Redirection après 2 secondes
                     return;
                 }
 
-                if (!productsResponse.ok || !categoriesResponse.ok) {
-                    throw new Error("Erreur lors de la récupération des données.");
+                if (!response.ok) {
+                    throw new Error("Erreur lors de la récupération des produits.");
                 }
 
-                const productsData = await productsResponse.json();
-                const categoriesData = await categoriesResponse.json();
-
+                const productsData = await response.json();
                 setProducts(productsData);
-                setCategories(categoriesData);
                 setLoading(false);
             } catch (error) {
                 console.error("Erreur:", error);
-                setError("Impossible de charger les données. Vérifiez votre connexion.");
+                setError("Impossible de charger les produits.");
                 setLoading(false);
             }
         };
@@ -60,9 +58,8 @@ const ProductsList = () => {
         fetchData();
     }, [navigate]);
 
-    if (loading) return <p>Chargement des produits et catégories...</p>;
+    if (loading) return <p>Chargement des produits...</p>;
     if (error) return <p style={{ color: "red", fontWeight: "bold" }}>{error}</p>;
-
 
     return (
         <div>
@@ -72,13 +69,13 @@ const ProductsList = () => {
                     <li key={product.id}>{product.name}</li>
                 ))}
             </ul>
-
-            <h2>Liste des Catégories</h2>
-            <ul>
-                {categories.map((category) => (
-                    <li key={category.id}>{category.name}</li>
-                ))}
-            </ul>
+            {isAdmin && (
+                <div>
+                    <button>Ajouter un produit</button>
+                    <button>Modifier un produit</button>
+                    <button>Supprimer un produit</button>
+                </div>
+            )}
         </div>
     );
 };
