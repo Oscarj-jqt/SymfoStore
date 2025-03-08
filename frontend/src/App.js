@@ -11,9 +11,12 @@ import store from './redux/store.js';
 function App() {
 
     return (
-        <div>
-            <Login />
-        </div>
+        <Provider store={store}>
+            <div>
+                <Login />
+            </div>
+        </Provider>
+
     );
 }
 

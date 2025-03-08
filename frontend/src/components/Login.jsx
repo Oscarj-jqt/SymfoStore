@@ -16,13 +16,14 @@ const Login = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ email: email, password: password }),
+                body: JSON.stringify({ email: email, password }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
                 localStorage.setItem("token", data.token);
+                localStorage.setItem("role", data.role);
                 setMessage("Connexion réussie !");
                 setIsLoggedIn(true);
             } else {

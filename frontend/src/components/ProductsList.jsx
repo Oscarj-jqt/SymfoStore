@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { addProduct, updateProduct, deleteProduct, setProductError } from "../redux/reducers/productsReducer";
 import '../../src/index.css';
@@ -36,7 +36,7 @@ const ProductsList = () => {
                 if (productsResponse.status === 401 || categoriesResponse.status === 401) {
                     setError("Session expirée. Veuillez vous reconnecter.");
                     localStorage.removeItem("token"); // On supprime le token expiré
-                    setTimeout(() => navigate("/"), 2000); // Redirection après 2 secondes
+                    setTimeout(() => navigate("/api/login"), 2000); // Redirection après 2 secondes
                     return;
                 }
 
