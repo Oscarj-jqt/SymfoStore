@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import jwt_decode from "jwt-decode"; // Import de la librairie jwt-decode
+import { jwtDecode } from "jwt-decode";
 
 const ProductsList = () => {
     const [products, setProducts] = useState([]);
@@ -12,14 +12,8 @@ const ProductsList = () => {
         const fetchData = async () => {
             const token = localStorage.getItem("token");
 
-            if (!token) {
-                setError("Token manquant. Veuillez vous reconnecter.");
-                setLoading(false);
-                return;
-            }
-
             // Décoder le token
-            const decodedToken = jwt_decode(token);
+            const decodedToken = jwtDecode(token);
             console.log(decodedToken); // Vérifie la structure du token
 
             // Vérifier si l'utilisateur a le rôle 'ROLE_ADMIN'
@@ -37,7 +31,7 @@ const ProductsList = () => {
                 if (response.status === 401) {
                     setError("Session expirée. Veuillez vous reconnecter.");
                     localStorage.removeItem("token");
-                    setTimeout(() => navigate("/login"), 2000); // Redirection après 2 secondes
+                    setTimeout(() => navigate("/api/login"), 2000); // Redirection après 2 secondes
                     return;
                 }
 
