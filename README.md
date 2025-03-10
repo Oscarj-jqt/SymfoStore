@@ -24,7 +24,6 @@ Ce projet est une application permettant de gérer un catalogue de produits et l
 
 ### Fonctionnalités Principales
 * **Gestion des produits** : Création, modification, suppression et affichage des produits via AJAX.
-* **Gestion des catégories** : Création, modification, suppression et affichage des catégories.
 * **Authentification sécurisée** avec JWT pour restreindre certaines actions, telles que l'ajout ou la suppression de produits, aux administrateurs uniquement.
 * **Gestion des relations** entre produits et catégories.
 * **Validation des données** côté backend pour assurer l'intégrité des informations stockées.
