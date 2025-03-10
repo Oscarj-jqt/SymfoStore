@@ -40,80 +40,49 @@ const ProductsList = () => {
     return (
         <div>
             <h2>Liste des Produits</h2>
-
             {loading && <p>Chargement...</p>}
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
 
-            <ul>
+            <table border="1">
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Description</th>
+                    <th>Prix</th>
+                    <th>Catégorie</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
                 {products.map((product) => (
-                    <li key={product.id}>
-                        {editProduct?.id === product.id ? (
-                            <div>
-                                <input
-                                    type="text"
-                                    value={editProduct.name}
-                                    onChange={(e) => setEditProduct({ ...editProduct, name: e.target.value })}
-                                />
-                                <input
-                                    type="text"
-                                    value={editProduct.description}
-                                    onChange={(e) => setEditProduct({ ...editProduct, description: e.target.value })}
-                                />
-                                <input
-                                    type="number"
-                                    value={editProduct.price}
-                                    onChange={(e) => setEditProduct({ ...editProduct, price: e.target.value })}
-                                />
-                                <button onClick={() => handleUpdateProduct(product.id)}>Enregistrer</button>
-                                <button onClick={() => setEditProduct(null)}>Annuler</button>
-                            </div>
-                        ) : (
-                            <div>
-                                {product.name} - {product.price}€
-                                {token && (
-                                    <div>
-                                        <button onClick={() => setEditProduct(product)}>Modifier</button>
-                                        <button onClick={() => handleDeleteProduct(product.id)}>Supprimer</button>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </li>
+                    <tr key={product.id}>
+                        <td>{product.name}</td>
+                        <td>{product.description}</td>
+                        <td>{product.price} €</td>
+                        <td>{product.category?.name || "Non défini"}</td>
+                        <td>
+                            <button onClick={() => handleUpdateProduct}>Modifier</button>
+                            <button onClick={() => dispatch(deleteProductAsync(product.id))}>Supprimer</button>
+                        </td>
+                    </tr>
                 ))}
-            </ul>
+                </tbody>
+            </table>
 
-            {token && (
-                <div>
-                    <h3>Ajouter un produit</h3>
-                    <input
-                        type="text"
-                        placeholder="Nom"
-                        value={newProduct.name}
-                        onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Description"
-                        value={newProduct.description}
-                        onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                    />
-                    <input
-                        type="number"
-                        placeholder="Prix"
-                        value={newProduct.price}
-                        onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                    />
-                    <input
-                        type="number"
-                        placeholder="ID Catégorie"
-                        value={newProduct.category_id}
-                        onChange={(e) => setNewProduct({ ...newProduct, category_id: e.target.value })}
-                    />
-                    <button onClick={handleAddProduct}>Ajouter</button>
-                </div>
-            )}
+            <h3>Ajouter un Produit</h3>
+            <input type="text" placeholder="Nom" value={newProduct.name} onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })} />
+            <input type="text" placeholder="Description" value={newProduct.description} onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })} />
+            <input type="number" placeholder="Prix" value={newProduct.price} onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })} />
+            {/*<select value={newProduct.category_id} onChange={(e) => setNewProduct({ ...newProduct, category_id: e.target.value })}>*/}
+            {/*    /!*<option value="">Sélectionner une catégorie</option>*!/*/}
+            {/*    /!*{categories.map((cat) => (*!/*/}
+            {/*    /!*    <option key={cat.id} value={cat.id}>{cat.name}</option>*!/*/}
+            {/*    /!*))}*!/*/}
+            {/*</select>*/}
+            <button onClick={handleAddProduct}>Ajouter</button>
         </div>
     );
+
 };
 
 export default ProductsList;
