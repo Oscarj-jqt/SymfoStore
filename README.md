@@ -2,6 +2,8 @@
 
 Ce projet est une application permettant de gérer un catalogue de produits et leurs catégories via une API RESTful. Elle inclut des fonctionnalités comme la gestion des accès, la validation des données et l’authentification sécurisée via JWT. Le backend est développé en **PHP avec Symfony**, et la base de données utilisée est **MySQL**.
 
+![demo page](/symfostore_cap.png)
+
 ## Description des Choix Techniques
 
 ### Backend - PHP avec Symfony & MySQL
