@@ -38,26 +38,28 @@ class LoginController extends AbstractController
             return new JsonResponse(['message' => 'Email and password are required'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        // checking is user existing
+        // checking if user exists
         $user = $this->entityManager
             ->getRepository(User::class)
             ->findOneBy(['email' => $email]);
 
-        $roles = $user->getRoles();
-        error_log('User roles: '.json_encode($roles));
-
-        // Checking if user has admin role
-        if (in_array('ROLE_ADMIN', $roles, true)) {
-            $token = $JWTManager->create($user);
-
-            return new JsonResponse([
-                'message' => 'Login successful as Admin',
-                'token' => $token,
-            ]);
-        } else {
-            return new JsonResponse([
-                'message' => 'Login successful as User. No token provided.',
-            ]);
+        if (!$user) {
+            return new JsonResponse(['message' => 'User not found'], JsonResponse::HTTP_NOT_FOUND);
         }
+
+        // Verify password
+        if (!$passwordEncoder->isPasswordValid($user, $password)) {
+            return new JsonResponse(['message' => 'Invalid password'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+
+        $roles = $user->getRoles();
+        $token = $JWTManager->create($user);
+
+        return new JsonResponse([
+            'message' => 'Login successful',
+            'token' => $token,
+            'roles' => $roles
+        ]);
     }
 }
