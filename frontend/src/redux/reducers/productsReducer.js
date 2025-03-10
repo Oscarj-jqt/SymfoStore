@@ -1,31 +1,46 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-// 🔹 URL de base pour l'API
 const API_URL = "http://127.0.0.1:8000/api/admin/product";
+
+// 🔹 Charger tous les produits
+export const fetchProductsAsync = createAsyncThunk(
+    "product",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/product");
+            if (!response.ok) {
+                throw new Error("Erreur lors du chargement des produits");
+            }
+            return await response.json();
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
 
 // 🔹 Ajouter un produit
 export const addProductAsync = createAsyncThunk(
     "products/addProduct",
     async (productData, { rejectWithValue }) => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${API_URL}/new`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(productData),
-        });
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`${API_URL}/new`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(productData),
+            });
 
-        if (!response.ok) {
-          throw new Error("Échec de l'ajout du produit");
+            if (!response.ok) {
+                throw new Error("Échec de l'ajout du produit");
+            }
+
+            return await response.json();
+        } catch (error) {
+            return rejectWithValue(error.message);
         }
-
-        return await response.json();
-      } catch (error) {
-        return rejectWithValue(error.message);
-      }
     }
 );
 
@@ -33,25 +48,25 @@ export const addProductAsync = createAsyncThunk(
 export const updateProductAsync = createAsyncThunk(
     "products/updateProduct",
     async ({ id, updatedProduct }, { rejectWithValue }) => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${API_URL}/edit/${id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(updatedProduct),
-        });
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`${API_URL}/edit/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(updatedProduct),
+            });
 
-        if (!response.ok) {
-          throw new Error("Échec de la modification du produit");
+            if (!response.ok) {
+                throw new Error("Échec de la modification du produit");
+            }
+
+            return await response.json();
+        } catch (error) {
+            return rejectWithValue(error.message);
         }
-
-        return await response.json();
-      } catch (error) {
-        return rejectWithValue(error.message);
-      }
     }
 );
 
@@ -59,68 +74,70 @@ export const updateProductAsync = createAsyncThunk(
 export const deleteProductAsync = createAsyncThunk(
     "products/deleteProduct",
     async (id, { rejectWithValue }) => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${API_URL}/delete/${id}`, {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`${API_URL}/delete/${id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-        if (!response.ok) {
-          throw new Error("Échec de la suppression du produit");
+            if (!response.ok) {
+                throw new Error("Échec de la suppression du produit");
+            }
+
+            return id;
+        } catch (error) {
+            return rejectWithValue(error.message);
         }
-
-        return id; // Retourne l'ID du produit supprimé
-      } catch (error) {
-        return rejectWithValue(error.message);
-      }
     }
 );
 
 // 🔹 Initial state
 const initialState = {
-  products: [],
-  loading: false,
-  error: null,
+    products: [],
+    loading: false,
+    error: null,
 };
 
 // 🔹 Création du slice Redux
 const productsSlice = createSlice({
-  name: "products",
-  initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-        // 🔹 Ajouter un produit
-        .addCase(addProductAsync.pending, (state) => {
-          state.loading = true;
-          state.error = null;
-        })
-        .addCase(addProductAsync.fulfilled, (state, action) => {
-          state.loading = false;
-          state.products.push(action.payload);
-        })
-        .addCase(addProductAsync.rejected, (state, action) => {
-          state.loading = false;
-          state.error = action.payload;
-        })
-        // 🔹 Modifier un produit
-        .addCase(updateProductAsync.fulfilled, (state, action) => {
-          const index = state.products.findIndex((p) => p.id === action.payload.id);
-          if (index !== -1) {
-            state.products[index] = action.payload;
-          }
-        })
-        // 🔹 Supprimer un produit
-        .addCase(deleteProductAsync.fulfilled, (state, action) => {
-          state.products = state.products.filter((p) => p.id !== action.payload);
-        });
-  },
+    name: "products",
+    initialState,
+    reducers: {},
+    extraReducers: (builder) => {
+        builder
+            // 🔹 Charger les produits
+            .addCase(fetchProductsAsync.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchProductsAsync.fulfilled, (state, action) => {
+                state.loading = false;
+                state.products = action.payload;
+            })
+            .addCase(fetchProductsAsync.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+            // 🔹 Ajouter un produit
+            .addCase(addProductAsync.fulfilled, (state, action) => {
+                state.products.push(action.payload);
+            })
+            // 🔹 Modifier un produit
+            .addCase(updateProductAsync.fulfilled, (state, action) => {
+                const index = state.products.findIndex((p) => p.id === action.payload.id);
+                if (index !== -1) {
+                    state.products[index] = action.payload;
+                }
+            })
+            // 🔹 Supprimer un produit
+            .addCase(deleteProductAsync.fulfilled, (state, action) => {
+                state.products = state.products.filter((p) => p.id !== action.payload);
+            });
+    },
 });
 
-// 🔹 Export du reducer
 export default productsSlice.reducer;
 // import { createSlice } from '@reduxjs/toolkit';
 // je
