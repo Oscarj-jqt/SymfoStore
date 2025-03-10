@@ -1,94 +1,93 @@
 import { useEffect, useState } from "react";
-// import { useNavigate } from "react-router";
+import { useSelector, useDispatch } from "react-redux";
+import { addProduct, deleteProduct, updateProduct, setProductError } from "../redux/reducers/productsReducer";
 import { jwtDecode } from "jwt-decode";
 
+
 const ProductsList = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [isAdmin, setIsAdmin] = useState(false); // Ajout du state isAdmin
-    // const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const products = useSelector((state) => state.products.products);
+    const error = useSelector((state) => state.products.error);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [newProductName, setNewProductName] = useState("");
 
     useEffect(() => {
-        const fetchData = async () => {
-            const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token");
 
-            if (!token) {
-                setError("Aucun token trouvé, veuillez vous connecter.");
-                return;
-            }
+        if (!token) {
+            dispatch(setProductError("Token manquant. Veuillez vous reconnecter."));
+            return;
+        }
 
-            try {
-                // Décoder le token
-                const decodedToken = jwtDecode(token);
-                console.log(decodedToken); // Vérifie la structure du token
+        // Décoder le token pour vérifier le rôle de l'utilisateur
+        const decodedToken = jwtDecode(token);
+        setIsAdmin(decodedToken.roles && decodedToken.roles.includes("ROLE_ADMIN"));
 
-                // Vérifier si l'utilisateur a le rôle 'ROLE_ADMIN'
-                const isUserAdmin = decodedToken.roles && decodedToken.roles.includes('ROLE_ADMIN');
-                setIsAdmin(isUserAdmin); // Met à jour le state
+        // Charger les produits depuis l'API
+        fetch("http://127.0.0.1:8000/api/product", {
+            headers: { "Authorization": `Bearer ${token}` },
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                data.forEach((product) => dispatch(addProduct(product)));
+            })
+            .catch((err) => dispatch(setProductError("Erreur lors du chargement des produits.")));
+    }, [dispatch]);
 
-                const response = await fetch("http://127.0.0.1:8000/api/admin/product", {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`,
-                    },
-                });
+    const handleAddProduct = () => {
+        if (!newProductName.trim()) return;
 
-                if (response.status === 401) {
-                    setError("Session expirée. Veuillez vous reconnecter.");
-                    localStorage.removeItem("token");
-                    return;
-                }
+        const token = localStorage.getItem("token");
+        fetch("http://127.0.0.1:8000/api/admin/product", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({ name: newProductName }),
+        })
+            .then((res) => res.json())
+            .then((newProduct) => dispatch(addProduct(newProduct)))
+            .catch(() => dispatch(setProductError("Erreur lors de l'ajout du produit.")));
 
-                if (!response.ok) {
-                    throw new Error("Erreur lors de la récupération des produits.");
-                }
+        setNewProductName("");
+    };
 
-                const productsData = await response.json();
-                setProducts(productsData);
-                setLoading(false);
-            } catch (error) {
-                console.error("Erreur:", error);
-                setError("Impossible de charger les produits.");
-                setLoading(false);
-            }
-        };
+    const handleDeleteProduct = (id) => {
+        const token = localStorage.getItem("token");
+        fetch(`http://127.0.0.1:8000/api/admin/product/${id}`, {
+            method: "DELETE",
+            headers: { "Authorization": `Bearer ${token}` },
+        })
+            .then((res) => {
+                if (res.ok) dispatch(deleteProduct(id));
+                else throw new Error();
+            })
+            .catch(() => dispatch(setProductError("Erreur lors de la suppression.")));
+    };
 
-        fetchData();
-    }, []);
-
-    if (loading) return <p>Chargement des produits...</p>;
     if (error) return <p style={{ color: "red", fontWeight: "bold" }}>{error}</p>;
 
     return (
         <div>
             <h2>Liste des Produits</h2>
-            <table border="1" cellPadding="10">
-                <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Catégorie</th>
-                    <th>Description</th>
-                    <th>Prix (€)</th>
-                </tr>
-                </thead>
-                <tbody>
+            <ul>
                 {products.map((product) => (
-                    <tr key={product.id}>
-                        <td>{product.name}</td>
-                        <td>{product.category?.name || "Non défini"}</td>
-                        <td>{product.description}</td>
-                        <td>{product.price} €</td>
-                    </tr>
+                    <li key={product.id}>
+                        {product.name} {isAdmin && <button onClick={() => handleDeleteProduct(product.id)}>🗑️</button>}
+                    </li>
                 ))}
-                </tbody>
-            </table>
-            {isAdmin && ( // Utilisation du state isAdmin ici
+            </ul>
+
+            {isAdmin && (
                 <div>
-                    <button>Ajouter un produit</button>
-                    <button>Modifier un produit</button>
-                    <button>Supprimer un produit</button>
+                    <input
+                        type="text"
+                        placeholder="Nouveau produit"
+                        value={newProductName}
+                        onChange={(e) => setNewProductName(e.target.value)}
+                    />
+                    <button onClick={handleAddProduct}>Ajouter un produit</button>
                 </div>
             )}
         </div>
