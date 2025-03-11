@@ -5,6 +5,7 @@ import store from './redux/store.js';
 import Login from "./components/Login";
 import Register from "./components/Register";
 import ProductsList from "./components/ProductsList";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
     return (
@@ -13,7 +14,8 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Register />} />
                     <Route path="/login" element={<Login />} />
-                    <Route path="/products" element={<ProductsList />} />
+                    {/* Route protégée */}
+                    <Route path="/products" element={<PrivateRoute><ProductsList /></PrivateRoute>} />
                 </Routes>
             </Router>
         </Provider>

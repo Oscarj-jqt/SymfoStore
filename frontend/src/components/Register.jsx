@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import ProductsList from "./ProductsList";
 
 const Register = () => {
@@ -11,11 +12,9 @@ const Register = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/register", {
+            const response = await fetch("http://127.0.0.1:8000/api/register", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
             });
 
@@ -23,11 +22,11 @@ const Register = () => {
 
             if (response.ok) {
                 localStorage.setItem("token", data.token);
-                localStorage.setItem("role", data.roles);
+                localStorage.setItem("role", data.role);
                 setMessage("Inscription réussie !");
                 setIsRegistered(true);
             } else {
-                setMessage("Erreur : " + (data.error || "Problème lors de l'inscription"));
+                setMessage("Erreur : " + data.message);
             }
         } catch (error) {
             setMessage("Erreur de connexion au serveur.");
@@ -36,32 +35,28 @@ const Register = () => {
 
     return (
         <div>
-            {!isRegistered ? (
-                <>
-                    <h2>Inscription</h2>
-                    <form onSubmit={handleRegister}>
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <input
-                            type="password"
-                            placeholder="Mot de passe"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                        <button type="submit">S'inscrire</button>
-                    </form>
-                    <p>{message}</p>
-                </>
-            ) : (
-                <>
-                    <p style={{ color: "green", fontWeight: "bold" }}>{message}</p>
-                    <ProductsList />
-                </>
-            )}
+            <h2>Inscription</h2>
+            <form onSubmit={handleRegister}>
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
+                <input
+                    type="password"
+                    placeholder="Mot de passe"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+                <button type="submit">S'inscrire</button>
+            </form>
+            <p>{message}</p>
+
+            {/* Ajout du lien vers /login */}
+            <p>
+                Déjà un compte ? <Link to="/login">Se connecter</Link>
+            </p>
         </div>
     );
 };
