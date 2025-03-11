@@ -12,7 +12,7 @@ const ProductsList = () => {
     const { products, loading, error } = useSelector((state) => state.products);
     const token = localStorage.getItem("token"); // Vérifie si l'utilisateur est admin
 
-    // 🔹 États pour la gestion de l'ajout et de la modification
+    //  États pour la gestion de l'ajout et de la modification
     const [newProduct, setNewProduct] = useState({ name: "", description: "", price: "", category_id: "" });
     const [editProduct, setEditProduct] = useState(null);
 
@@ -20,19 +20,19 @@ const ProductsList = () => {
         dispatch(fetchProductsAsync());
     }, [dispatch]);
 
-    // 🔹 Ajouter un produit
+    //  Ajouter un produit
     const handleAddProduct = () => {
         dispatch(addProductAsync(newProduct));
         setNewProduct({ name: "", description: "", price: "", category_id: "" }); // Réinitialisation du formulaire
     };
 
-    // 🔹 Modifier un produit
+    //  Modifier un produit
     const handleUpdateProduct = (id) => {
         dispatch(updateProductAsync({ id, updatedProduct: editProduct }));
         setEditProduct(null); // Quitter le mode édition
     };
 
-    // 🔹 Supprimer un produit
+    //  Supprimer un produit
     const handleDeleteProduct = (id) => {
         dispatch(deleteProductAsync(id));
     };
