@@ -1,28 +1,22 @@
 import React from 'react';
-import Login from "./components/Login";
-import Register from "./components/Register";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Provider } from 'react-redux';
 import store from './redux/store.js';
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./components/Login";
+import Register from "./components/Register";
 import ProductsList from "./components/ProductsList";
 
-// import ProductsList from "./components/ProductsList.jsx";
-// import CategoriesList from "./components/CategoriesList.jsx";
-// import { useEffect} from "react";
-
-
-
 function App() {
-
     return (
-
         <Provider store={store}>
-            <div>
-                <Register />
-                <Login />
-            </div>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<Register />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/products" element={<ProductsList />} />
+                </Routes>
+            </Router>
         </Provider>
-
     );
 }
 
