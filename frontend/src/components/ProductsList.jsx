@@ -15,26 +15,41 @@ const ProductsList = () => {
     //  États pour la gestion de l'ajout et de la modification
     const [newProduct, setNewProduct] = useState({ name: "", description: "", price: "", category_id: "" });
     const [editProduct, setEditProduct] = useState(null);
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         dispatch(fetchProductsAsync());
     }, [dispatch]);
 
+    //  Vérifier que le produit est valide
+    const isValidProduct = (product) => {
+        if (!product.name.trim()) {
+            setMessage("Le nom du produit est requis.");
+            return false;
+        }
+        if (!product.price || isNaN(product.price) || Number(product.price) <= 0) {
+            setMessage("Le prix doit être un nombre positif.");
+            return false;
+        }
+        return true;
+    };
+
     //  Ajouter un produit
     const handleAddProduct = () => {
+        if (!isValidProduct(newProduct)) return;
+
         dispatch(addProductAsync(newProduct));
-        setNewProduct({ name: "", description: "", price: "", category_id: "" }); // Réinitialisation du formulaire
+        setNewProduct({ name: "", description: "", price: "", category_id: "" });
+        setMessage(""); // Réinitialiser le message
     };
 
     //  Modifier un produit
     const handleUpdateProduct = (id) => {
+        if (!isValidProduct(editProduct)) return;
+
         dispatch(updateProductAsync({ id, updatedProduct: editProduct }));
         setEditProduct(null); // Quitter le mode édition
-    };
-
-    //  Supprimer un produit
-    const handleDeleteProduct = (id) => {
-        dispatch(deleteProductAsync(id));
+        setMessage(""); // Réinitialiser le message
     };
 
     return (
@@ -42,6 +57,7 @@ const ProductsList = () => {
             <h2>Liste des Produits</h2>
             {loading && <p>Chargement...</p>}
             {error && <p style={{ color: 'red' }}>{error}</p>}
+            {message && <p style={{ color: 'red', fontWeight: 'bold' }}>{message}</p>}
 
             <table border="1">
                 <thead>
@@ -61,7 +77,7 @@ const ProductsList = () => {
                         <td>{product.price} €</td>
                         <td>{product.category?.name || "Non défini"}</td>
                         <td>
-                            <button onClick={() => handleUpdateProduct}>Modifier</button>
+                            <button onClick={() => setEditProduct(product)}>Modifier</button>
                             <button onClick={() => dispatch(deleteProductAsync(product.id))}>Supprimer</button>
                         </td>
                     </tr>
@@ -73,16 +89,9 @@ const ProductsList = () => {
             <input type="text" placeholder="Nom" value={newProduct.name} onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })} />
             <input type="text" placeholder="Description" value={newProduct.description} onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })} />
             <input type="number" placeholder="Prix" value={newProduct.price} onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })} />
-            {/*<select value={newProduct.category_id} onChange={(e) => setNewProduct({ ...newProduct, category_id: e.target.value })}>*/}
-            {/*    /!*<option value="">Sélectionner une catégorie</option>*!/*/}
-            {/*    /!*{categories.map((cat) => (*!/*/}
-            {/*    /!*    <option key={cat.id} value={cat.id}>{cat.name}</option>*!/*/}
-            {/*    /!*))}*!/*/}
-            {/*</select>*/}
             <button onClick={handleAddProduct}>Ajouter</button>
         </div>
     );
-
 };
 
 export default ProductsList;
