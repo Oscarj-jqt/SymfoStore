@@ -8,8 +8,24 @@ const Register = () => {
     const [message, setMessage] = useState("");
     const [isRegistered, setIsRegistered] = useState(false);
 
+    const validateEmail = (email) => {
+        // Vérifie si l'email est valide avec une regex simple
+        return /\S+@\S+\.\S+/.test(email);
+    };
+
     const handleRegister = async (e) => {
         e.preventDefault();
+
+        // Validation côté front
+        if (!validateEmail(email)) {
+            setMessage("Veuillez entrer un email valide.");
+            return;
+        }
+
+        if (password.length < 6) {
+            setMessage("Le mot de passe doit contenir au moins 6 caractères.");
+            return;
+        }
 
         try {
             const response = await fetch("http://127.0.0.1:8000/api/register", {
@@ -35,28 +51,37 @@ const Register = () => {
 
     return (
         <div>
-            <h2>Inscription</h2>
-            <form onSubmit={handleRegister}>
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                />
-                <input
-                    type="password"
-                    placeholder="Mot de passe"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-                <button type="submit">S'inscrire</button>
-            </form>
-            <p>{message}</p>
+            {!isRegistered ? (
+                <>
+                    <h2>Inscription</h2>
+                    <form onSubmit={handleRegister}>
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <input
+                            type="password"
+                            placeholder="Mot de passe"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <button type="submit">S'inscrire</button>
+                    </form>
+                    <p style={{ color: "red", fontWeight: "bold" }}>{message}</p>
 
-            {/* Ajout du lien vers /login */}
-            <p>
-                Déjà un compte ? <Link to="/login">Se connecter</Link>
-            </p>
+                    {/* Ajout du lien vers /login */}
+                    <p>
+                        Déjà un compte ? <Link to="/login">Se connecter</Link>
+                    </p>
+                </>
+            ) : (
+                <>
+                    <p style={{ color: "green", fontWeight: "bold" }}>{message}</p>
+                    <ProductsList />
+                </>
+            )}
         </div>
     );
 };
