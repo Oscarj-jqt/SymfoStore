@@ -7,8 +7,24 @@ const Login = () => {
     const [message, setMessage] = useState("");
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+    const validateEmail = (email) => {
+        // Vérifie si l'email est valide avec une regex simple
+        return /\S+@\S+\.\S+/.test(email);
+    };
+
     const handleLogin = async (e) => {
         e.preventDefault();
+
+        // Validation côté front
+        if (!validateEmail(email)) {
+            setMessage("Veuillez entrer un email valide.");
+            return;
+        }
+
+        if (password.length < 6) {
+            setMessage("Le mot de passe doit contenir au moins 6 caractères.");
+            return;
+        }
 
         try {
             const response = await fetch("http://127.0.0.1:8000/api/login", {
@@ -27,7 +43,7 @@ const Login = () => {
                 setMessage("Connexion réussie !");
                 setIsLoggedIn(true);
             } else {
-                setMessage("Erreur : mail ou mot de passe erroné " + data.message);
+                setMessage("Erreur : " + data.message);
             }
         } catch (error) {
             setMessage("Erreur de connexion au serveur.");
@@ -54,7 +70,7 @@ const Login = () => {
                         />
                         <button type="submit">Se connecter</button>
                     </form>
-                    <p>{message}</p>
+                    <p style={{ color: "red", fontWeight: "bold" }}>{message}</p>
                 </>
             ) : (
                 <>
