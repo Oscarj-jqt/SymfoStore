@@ -4,6 +4,10 @@
         colors="true"
         bootstrap="vendor/autoload.php"
 >
+    <php>
+        <env name="KERNEL_CLASS" value="App\Kernel" />
+    </php>
+
     <testsuites>
         <testsuite name="Application Test Suite">
             <directory>./tests</directory>
