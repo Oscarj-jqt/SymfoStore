@@ -14,7 +14,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-
 #[Route('/api/admin/product')]
 final class ProductController extends AbstractController
 {
@@ -127,5 +126,3 @@ final class ProductController extends AbstractController
         return $this->json(['message' => 'Product deleted'], Response::HTTP_NO_CONTENT);
     }
 }
-
-

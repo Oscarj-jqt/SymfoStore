@@ -52,14 +52,13 @@ class LoginController extends AbstractController
             return new JsonResponse(['message' => 'Invalid password'], JsonResponse::HTTP_UNAUTHORIZED);
         }
 
-
         $roles = $user->getRoles();
         $token = $JWTManager->create($user);
 
         return new JsonResponse([
             'message' => 'Login successful',
             'token' => $token,
-            'roles' => $roles
+            'roles' => $roles,
         ]);
     }
 }
